@@ -9,7 +9,7 @@
         </div>
     {% endfor %}
     <div class="exemple-wrapper">
-        <h1>Your spaces</h1>
+        <h1>Your Animals</h1>
         <table class="table table-stripped">
             <tr>
                 <th>ID number</th>
@@ -25,14 +25,12 @@
                 <th>Quarantine</th>
                 <th>Paddock</th>
                 <th></th>
+                <th></th>
             </tr>
             {% for a in animals %}
                 <tr>
                     <td>{{ a.identificationNumber }}</td>
                     <td>{{ a.name }}</td>
-                    {# je force le type psq ça pue
-                    Je le fais en ce format car c'est le format à l'anglaise comme ils ont perdu au foot
-                    et il mange comme des gens compliqués qui aiment pas les légumes #}
                     <td>{{ a.brithDate|date('Y-m-d') }}</td>
                     <td>{{ a.arrivalDate|date('Y-m-d') }}</td>
                     <td>{{ a.departureDate|date('Y-m-d') }}</td>
@@ -40,15 +38,27 @@
                     <td>{{ a.species }}</td>
                     <td>{{ a.type }}</td>
                     <td>{{ a.gender }}</td>
-                    <td>{{ a.sterilized }}</td>
-                    <td>{{ a.quarantaine }}</td>
-                    <td>
-                    {% if a.Paddock is not null %}
-                    {{ a.Paddock.name }}
+                    {% if a.sterilized == 1 %}
+                        <td>oui</td>
+                    {% else %}
+                        <td>non</td>
                     {% endif %}
-                    </td>
+
+                    {% if a.quarantaine == 1 %}
+                        <td>oui</td>
+                    {% else %}
+                        <td>non</td>
+                    {% endif %}
+                    {# BY SIMON #}
+                    {% if a.Paddock is not null %}
+                        <td> {{ a.Paddock.name }} </td>
+                    {% else %}
+                        <td>non</td>
+                    {% endif %}
                     <td>
                         <a href="{{ path("modify_animal", {"id":a.id}) }}" class="btn btn-warning">modify</a>
+                    </td>
+                    <td>
                         <a href="{{ path("delete_animal", {"id":a.id}) }}" class="btn btn-danger">delete</a>
                     </td>
                 </tr>

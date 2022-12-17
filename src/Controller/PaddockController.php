@@ -24,6 +24,8 @@ class PaddockController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $this->doQuarantine($data);
             $em = $doctrine->getManager();
             $em->persist($paddock);
             $em->flush();
@@ -51,6 +53,8 @@ class PaddockController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $this->doQuarantine($data);
             $em = $doctrine->getManager();
             $em->persist($paddock);
             $em->flush();
@@ -81,10 +85,15 @@ class PaddockController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $doctrine->getManager();
-            $entityManager->remove($paddock);
-            $entityManager->flush();
-            return $this->redirectToRoute("app_paddock");
+            $data = $form->getData();
+            // BY SIMON
+            if (sizeof($data->getAnimals()) == 0) {
+                $entityManager = $doctrine->getManager();
+                $entityManager->remove($paddock);
+                $entityManager->flush();
+                return $this->redirectToRoute("app_paddock");
+            }
+            $this->addFlash('error', "Can't delete a not empty paddock :(");
         }
 
         return $this->render("paddock/delete.html.twig", [
@@ -92,39 +101,14 @@ class PaddockController extends AbstractController
             'formular' => $form->createView()
         ]);
     }
-
+    public function doQuarantine($paddock)
+    {
+        if ($paddock->isQuarantine()) {
+            $this->addFlash('success', "All your animals are in quarantine");
+            foreach ($paddock->getAnimals() as $a) {
+                $a->setQuarantaine(true);
+            }
+        }
+    }
 }
 
-
-
-//
-//namespace App\Controller;
-//
-//use App\Entity\Paddock;
-//use App\Form\PaddockType;
-//use Doctrine\Persistence\ManagerRegistry;
-//use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-//use Symfony\Component\HttpFoundation\Request;
-//use Symfony\Component\HttpFoundation\Response;
-//use Symfony\Component\Routing\Annotation\Route;
-//
-//class PaddockController extends AbstractController
-//{
-//    /**
-//     * @Route("/paddock", name="app_paddock")
-//     */
-//    public function index(ManagerRegistry $doctrine, Request $request): Response
-//    {
-//        $paddock = new Paddock();
-//        $form = $this->createForm(PaddockType::class, $paddock);
-//        $form->handleRequest($request);
-//
-//        $repo = $doctrine->getRepository(Paddock::class);
-//        $paddocks = $repo->findAll();
-//
-//        return $this->render("paddock/index.html.twig", [
-//            'paddocks' => $paddocks,
-//            'formular' => $form->createView()
-//        ]);
-//    }
-//}

@@ -220,18 +220,6 @@ class Animal
         return $this;
     }
 
-//    public function getPaddock(): ?Paddock
-//    {
-//        return $this->paddock;
-//    }
-//
-//    public function setPaddock(?Paddock $paddock): self
-//    {
-//        $this->paddock = $paddock;
-//
-//        return $this;
-//    }
-
 public function getPaddock(): ?Paddock
 {
     return $this->Paddock;

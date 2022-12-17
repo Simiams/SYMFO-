@@ -26,12 +26,6 @@ class PaddockType extends AbstractType
             ])
             ->add('MaxAnimals')
             ->add('Quarantine')
-//            ->add('animals', EntityType::class, [
-//                'class' => Animal::class,
-//                'choice_label' => "name",
-//                'multiple' => true,
-//                'expanded' => true
-//            ])
             ->add('OK', SubmitType::class, ["label" => "OK"]);;
 
     }

@@ -3,6 +3,11 @@
 {% block title %}Delete your animal cuz he dead{% endblock %}
 
 {% block body %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
     <div class="container">
         <h1>Are you sure you really want to delete {{ paddock.name }}?</h1>
         {{ form(formular) }}

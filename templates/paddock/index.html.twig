@@ -13,9 +13,10 @@
             <th>Name</th>
             <th>Space</th>
             <th>Area</th>
-            <th>Nombre d'animal max</th>
-            <th>En Quarantaine</th>
+            <th>Places</th>
+            <th>In Quarantine</th>
             <th>Animals</th>
+            <th></th>
             <th></th>
         </tr>
         {% for p in paddocks %}
@@ -30,22 +31,18 @@
                     <td>non</td>
                 {% endif %}
                 <td>
-                {% for a in p.Animals %}
-                    {{ a.name }}
-                {% endfor %}
-                    </td>
+                    {% for a in p.Animals %}
+                        {{ a.name }}
+                    {% endfor %}
+                </td>
                 <td>
                     <a href="{{ path("modify_paddock", {"id":p.id}) }}" class="btn btn-warning">modify</a>
+                </td>
+                <td>
                     <a href="{{ path("delete_paddock", {"id":p.id}) }}" class="btn btn-danger">delete</a>
                 </td>
             </tr>
         {% endfor %}
-
-        {#        {% for p in paddocks %} #}
-        {#            <li class="nav-item"> #}
-        {#                <a href="{{ path("app_paddock") }}">{{ p.name }}</a> #}
-        {#            </li> #}
-        {#        {% endfor %} #}
     </table>
 
 

@@ -47,8 +47,8 @@ class AnimalController extends AbstractController
                         //Si mon string est bien des nombres uniquement et fait 14 de long
                     } else if (strlen($data->getIdentificationNumber()) == 14 && ctype_digit($data->getIdentificationNumber())) {
 
-                        // BY SIMON
                         if ($data->getPaddock()->getMaxAnimals() > sizeof($data->getPaddock()->getAnimals())) {
+                            $this->doQuarantine($data);
                             $entityManager = $doctrine->getManager();
                             $entityManager->persist($data);
                             $entityManager->flush();
@@ -57,31 +57,18 @@ class AnimalController extends AbstractController
                         }else {
                             $this->addFlash("error", "Not enough place in your Paddock");
                         }
-                        // BY SIMON
 
                     } else {
                         //je dégage pour l'id
                         $this->addFlash('error', 'the id must 14 NUMBERS long');
-//                        return $this->render('animal/index.html.twig', [
-//                            'animals' => $animals,
-//                            'formular' => $form->createView(),
-//                        ]);
                     }
                 } else {
                     //je dégage pour la DDD
                     $this->addFlash('error', "the departure date must be later than the arrival date, logic isn't it?");
-//                    return $this->render('animal/index.html.twig', [
-//                        'animals' => $animals,
-//                        'formular' => $form->createView(),
-//                    ]);
                 }
             } else {
                 //je dégage pour la DDN
                 $this->addFlash('error', "Birth date must be sonner than the arrival date");
-//                return $this->render('animal/index.html.twig', [
-//                    'animals' => $animals,
-//                    'formular' => $form->createView(),
-//                ]);
             }
         }
         return $this->render("animal/index.html.twig", [
@@ -107,6 +94,9 @@ class AnimalController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            $this->doQuarantine($data);
             $em = $doctrine->getManager();
             $em->persist($animal);
             $em->flush();
@@ -149,4 +139,30 @@ class AnimalController extends AbstractController
             'formular' => $form->createView()
         ]);
     }
+
+    //si TOUT les animaux son en quarantaine, enclo = quarantain
+//    public function doQuarantine($animal){
+//        $allNotQuarantine = true;
+//        foreach ($animal->getPaddock()->getAnimals() as $a){
+//            if ($a->isQuarantaine()){
+//                $allNotQuarantine = false;
+//            }
+//        }
+//        if (!$animal->isQuarantaine() && $allNotQuarantine){
+//            $animal->getPaddock()->setQuarantine(false);
+//        }
+//        if ($animal->isQuarantaine() && !$allNotQuarantine){
+//            $animal->getPaddock()->setQuarantine(true);
+//        }
+//    }
+
+    //si AU MOINS les animaux son en quarantaine, enclo = quarantain
+    public function doQuarantine($animal){
+        foreach ($animal->getPaddock()->getAnimals() as $a){
+            if ($a->isQuarantaine()){
+                $animal->getPaddock()->setQuarantine(true);
+            }
+        }
+    }
 }
+
